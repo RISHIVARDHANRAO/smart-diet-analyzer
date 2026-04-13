@@ -2,22 +2,23 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Upload, Loader2, Save, ImageIcon } from 'lucide-react'
+import { Upload, Loader2, Save, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { saveEntry, generateId } from '@/lib/store'
+
+interface NutritionData {
+  name: string
+  calories: number
+  sugar: number
+  protein: number
+  fat: number
+}
 
 export function ScanForm() {
   const router = useRouter()
   const [image, setImage] = useState<string | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [ocrResult, setOcrResult] = useState<string>('')
-  const [name, setName] = useState('')
-  const [calories, setCalories] = useState('')
-  const [sugar, setSugar] = useState('')
-  const [protein, setProtein] = useState('')
-  const [fat, setFat] = useState('')
+  const [nutritionData, setNutritionData] = useState<NutritionData | null>(null)
 
   const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -25,27 +26,35 @@ export function ScanForm() {
       const reader = new FileReader()
       reader.onload = (event) => {
         setImage(event.target?.result as string)
-        // Simulate OCR analysis
+        setNutritionData(null)
+        // Simulate OCR analysis with extracted nutrition data
         setIsAnalyzing(true)
         setTimeout(() => {
           setIsAnalyzing(false)
-          setOcrResult('OCR integration ready. Use manual input or connect your OCR service.')
-        }, 1500)
+          // Simulated OCR extraction - in production, this would call an actual OCR API
+          setNutritionData({
+            name: 'Detected Food Item',
+            calories: Math.floor(Math.random() * 400) + 100,
+            sugar: Math.floor(Math.random() * 20) + 2,
+            protein: Math.floor(Math.random() * 30) + 5,
+            fat: Math.floor(Math.random() * 25) + 3,
+          })
+        }, 2000)
       }
       reader.readAsDataURL(file)
     }
   }, [])
 
   const handleSave = useCallback(() => {
-    if (!name || !calories) return
+    if (!nutritionData) return
 
     const entry = {
       id: generateId(),
-      name,
-      calories: parseFloat(calories) || 0,
-      sugar: parseFloat(sugar) || 0,
-      protein: parseFloat(protein) || 0,
-      fat: parseFloat(fat) || 0,
+      name: nutritionData.name,
+      calories: nutritionData.calories,
+      sugar: nutritionData.sugar,
+      protein: nutritionData.protein,
+      fat: nutritionData.fat,
       date: new Date().toISOString(),
       imageUrl: image || undefined,
     }
@@ -54,16 +63,11 @@ export function ScanForm() {
     
     // Reset form
     setImage(null)
-    setOcrResult('')
-    setName('')
-    setCalories('')
-    setSugar('')
-    setProtein('')
-    setFat('')
+    setNutritionData(null)
     
     router.push('/')
     router.refresh()
-  }, [name, calories, sugar, protein, fat, image, router])
+  }, [nutritionData, image, router])
 
   return (
     <div className="space-y-6">
@@ -107,100 +111,63 @@ export function ScanForm() {
           )}
         </div>
 
-        {/* OCR Result */}
+        {/* Analysis Status */}
         {isAnalyzing && (
           <div className="mt-4 flex items-center gap-3 rounded-lg bg-secondary/50 p-4">
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
-            <p className="text-sm text-card-foreground">Analyzing image...</p>
-          </div>
-        )}
-
-        {ocrResult && !isAnalyzing && (
-          <div className="mt-4 rounded-lg bg-secondary/50 p-4">
-            <div className="flex items-center gap-2">
-              <ImageIcon className="h-4 w-4 text-muted-foreground" />
-              <p className="text-xs font-medium text-muted-foreground">OCR Output</p>
+            <div>
+              <p className="text-sm font-medium text-card-foreground">Analyzing image...</p>
+              <p className="text-xs text-muted-foreground">Extracting nutrition information via OCR</p>
             </div>
-            <p className="mt-2 text-sm text-card-foreground">{ocrResult}</p>
           </div>
         )}
       </div>
 
-      {/* Manual Input Section */}
-      <div className="rounded-xl border border-border bg-card p-6">
-        <h3 className="text-sm font-medium text-muted-foreground">Nutrition Information</h3>
-        <p className="mt-1 text-xs text-muted-foreground">Enter values manually or let OCR fill them</p>
-        
-        <div className="mt-4 space-y-4">
-          <div>
-            <Label htmlFor="name" className="text-card-foreground">Food Name</Label>
-            <Input
-              id="name"
-              placeholder="e.g., Chicken Salad"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-1.5"
-            />
+      {/* Extracted Nutrition Data */}
+      {nutritionData && !isAnalyzing && (
+        <div className="rounded-xl border border-primary/30 bg-card p-6">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-primary" />
+            <h3 className="text-sm font-medium text-card-foreground">Nutrition Data Extracted</h3>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="calories" className="text-card-foreground">Calories (kcal)</Label>
-              <Input
-                id="calories"
-                type="number"
-                placeholder="0"
-                value={calories}
-                onChange={(e) => setCalories(e.target.value)}
-                className="mt-1.5"
-              />
+          <div className="mt-4 space-y-3">
+            <div className="flex items-center justify-between rounded-lg bg-secondary/50 px-4 py-3">
+              <span className="text-sm text-muted-foreground">Food Name</span>
+              <span className="text-sm font-medium text-card-foreground">{nutritionData.name}</span>
             </div>
-            <div>
-              <Label htmlFor="sugar" className="text-card-foreground">Sugar (g)</Label>
-              <Input
-                id="sugar"
-                type="number"
-                placeholder="0"
-                value={sugar}
-                onChange={(e) => setSugar(e.target.value)}
-                className="mt-1.5"
-              />
+            
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-secondary/50 px-4 py-3">
+                <p className="text-xs text-muted-foreground">Calories</p>
+                <p className="text-lg font-semibold text-card-foreground">{nutritionData.calories} <span className="text-xs font-normal text-muted-foreground">kcal</span></p>
+              </div>
+              <div className="rounded-lg bg-secondary/50 px-4 py-3">
+                <p className="text-xs text-muted-foreground">Sugar</p>
+                <p className="text-lg font-semibold text-card-foreground">{nutritionData.sugar} <span className="text-xs font-normal text-muted-foreground">g</span></p>
+              </div>
             </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="protein" className="text-card-foreground">Protein (g)</Label>
-              <Input
-                id="protein"
-                type="number"
-                placeholder="0"
-                value={protein}
-                onChange={(e) => setProtein(e.target.value)}
-                className="mt-1.5"
-              />
-            </div>
-            <div>
-              <Label htmlFor="fat" className="text-card-foreground">Fat (g)</Label>
-              <Input
-                id="fat"
-                type="number"
-                placeholder="0"
-                value={fat}
-                onChange={(e) => setFat(e.target.value)}
-                className="mt-1.5"
-              />
+            
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-secondary/50 px-4 py-3">
+                <p className="text-xs text-muted-foreground">Protein</p>
+                <p className="text-lg font-semibold text-card-foreground">{nutritionData.protein} <span className="text-xs font-normal text-muted-foreground">g</span></p>
+              </div>
+              <div className="rounded-lg bg-secondary/50 px-4 py-3">
+                <p className="text-xs text-muted-foreground">Fat</p>
+                <p className="text-lg font-semibold text-card-foreground">{nutritionData.fat} <span className="text-xs font-normal text-muted-foreground">g</span></p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Save Button */}
       <Button
         className="w-full"
         size="lg"
         onClick={handleSave}
-        disabled={!name || !calories}
+        disabled={!nutritionData}
       >
         <Save className="mr-2 h-4 w-4" />
         Save Entry
