@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Save, Check, Key } from 'lucide-react'
+import { Save, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -41,30 +41,6 @@ export function ProfileForm() {
 
   return (
     <div className="space-y-6">
-      {/* API Key Configuration */}
-      <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-6">
-        <div className="flex items-start gap-3 mb-4">
-          <Key className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
-          <div>
-            <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-200">API Configuration</h3>
-            <p className="mt-1 text-xs text-amber-800 dark:text-amber-300">Add your nutrition analysis API key for enhanced food scanning</p>
-          </div>
-        </div>
-        
-        <div>
-          <Label htmlFor="apiKey" className="text-amber-900 dark:text-amber-200 text-sm">API Key</Label>
-          <Input
-            id="apiKey"
-            type="password"
-            placeholder="sk_live_xxxxxxxxxxxxx"
-            value={profile.apiKey || ''}
-            onChange={(e) => setProfile({ ...profile, apiKey: e.target.value })}
-            className="mt-1.5"
-          />
-          <p className="mt-2 text-xs text-amber-700 dark:text-amber-300">Your key is encrypted and stored securely locally</p>
-        </div>
-      </div>
-
       {/* Body Metrics */}
       <div className="rounded-xl border border-border bg-card p-6">
         <h3 className="text-sm font-semibold text-foreground mb-4">Body Metrics</h3>
