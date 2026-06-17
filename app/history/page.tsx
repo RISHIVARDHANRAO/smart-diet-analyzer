@@ -1,21 +1,42 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Sidebar } from '@/components/sidebar'
 import { FoodEntryCard } from '@/components/food-entry-card'
 import { getEntries, deleteEntry } from '@/lib/store'
+import { useAuth } from '@/contexts/auth-context'
 import type { FoodEntry } from '@/lib/types'
 
 export default function HistoryPage() {
+  const router = useRouter()
+  const { user, isLoading } = useAuth()
   const [entries, setEntries] = useState<FoodEntry[]>([])
 
   useEffect(() => {
-    setEntries(getEntries())
-  }, [])
+    if (!isLoading && !user) {
+      router.push('/login')
+      return
+    }
+    if (user) {
+      setEntries(getEntries())
+    }
+  }, [user, isLoading, router])
 
   const handleDelete = (id: string) => {
     deleteEntry(id)
     setEntries(getEntries())
+  }
+
+  if (isLoading || !user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-border border-t-primary"></div>
+          <p className="text-sm text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -23,9 +44,9 @@ export default function HistoryPage() {
       <Sidebar />
       
       <main className="ml-64 flex-1 p-8">
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-4xl">
           <header className="mb-8">
-            <h1 className="text-2xl font-semibold text-foreground">History</h1>
+            <h1 className="text-3xl font-bold text-foreground">History</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               View and manage your food entries
             </p>
@@ -53,3 +74,4 @@ export default function HistoryPage() {
     </div>
   )
 }
+

@@ -1,9 +1,12 @@
 'use client'
 
+import React, { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { LayoutDashboard, ScanLine, History, User, Salad } from 'lucide-react'
+import { useRouter, usePathname } from 'next/navigation'
+import { LayoutDashboard, ScanLine, History, User, Salad, LogOut, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/auth-context'
+import { toast } from 'sonner'
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -14,6 +17,22 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const { user, logout, isLoading } = useAuth()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      await logout()
+      toast.success('Logged out successfully')
+      router.push('/login')
+    } catch (error) {
+      toast.error('Failed to logout')
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
 
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-border bg-sidebar">
@@ -45,12 +64,29 @@ export function Sidebar() {
         })}
       </nav>
       
-      <div className="border-t border-border p-4">
-        <div className="rounded-lg bg-secondary/50 p-4">
-          <p className="text-xs text-muted-foreground">Track your nutrition</p>
-          <p className="mt-1 text-sm font-medium text-sidebar-foreground">Stay healthy, stay fit</p>
-        </div>
+      <div className="border-t border-border space-y-3 p-4">
+        {user && (
+          <div className="rounded-lg bg-secondary/50 p-3 mb-3">
+            <p className="text-xs text-muted-foreground">Logged in as</p>
+            <p className="mt-1 text-sm font-medium text-sidebar-foreground truncate">
+              {user.email}
+            </p>
+          </div>
+        )}
+        <button
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="w-full flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoggingOut ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <LogOut className="h-4 w-4" />
+          )}
+          {isLoggingOut ? 'Logging out...' : 'Logout'}
+        </button>
       </div>
     </aside>
   )
 }
+
