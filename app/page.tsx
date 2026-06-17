@@ -54,76 +54,62 @@ export default function DashboardPage() {
             </p>
           </header>
 
-          {/* Metric Cards - 7 columns */}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <div className="lg:col-span-2">
-              <MetricCard
-                title="Calories"
-                value={totals.calories}
-                goal={profile.dailyCalorieGoal}
-                unit="kcal"
-                icon={<Flame className="h-5 w-5" />}
-                color="emerald"
-              />
-            </div>
-            <div className="lg:col-span-1">
-              <MetricCard
-                title="Carbs"
-                value={totals.carbohydrates}
-                goal={profile.dailyCarbsGoal}
-                unit="g"
-                icon={<Wheat className="h-5 w-5" />}
-                color="amber"
-              />
-            </div>
-            <div className="lg:col-span-1">
-              <MetricCard
-                title="Protein"
-                value={totals.protein}
-                goal={100}
-                unit="g"
-                icon={<Dumbbell className="h-5 w-5" />}
-                color="blue"
-              />
-            </div>
-            <div className="lg:col-span-1">
-              <MetricCard
-                title="Fat"
-                value={totals.fat}
-                unit="g"
-                icon={<CircleDot className="h-5 w-5" />}
-                color="red"
-              />
-            </div>
-            <div className="lg:col-span-1">
-              <MetricCard
-                title="Sugar"
-                value={totals.sugar}
-                unit="g"
-                icon={<Droplet className="h-5 w-5" />}
-                color="violet"
-              />
-            </div>
-            <div className="lg:col-span-1">
-              <MetricCard
-                title="Sodium"
-                value={totals.sodium}
-                goal={profile.dailySodiumGoal}
-                unit="mg"
-                icon={<Zap className="h-5 w-5" />}
-                color="cyan"
-              />
-            </div>
-            <div className="lg:col-span-1">
-              <MetricCard
-                title="Cholesterol"
-                value={totals.cholesterol}
-                goal={profile.dailyCholesterolGoal}
-                unit="mg"
-                icon={<AlertCircle className="h-5 w-5" />}
-                color="orange"
-              />
-            </div>
+          {/* Metric Cards - Organized Grid */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <MetricCard
+              title="Calories"
+              value={totals.calories}
+              goal={profile.dailyCalorieGoal}
+              unit="kcal"
+              icon={<Flame className="h-5 w-5" />}
+              color="emerald"
+            />
+            <MetricCard
+              title="Carbs"
+              value={totals.carbohydrates}
+              goal={profile.dailyCarbsGoal}
+              unit="g"
+              icon={<Wheat className="h-5 w-5" />}
+              color="amber"
+            />
+            <MetricCard
+              title="Protein"
+              value={totals.protein}
+              goal={100}
+              unit="g"
+              icon={<Dumbbell className="h-5 w-5" />}
+              color="blue"
+            />
+            <MetricCard
+              title="Fat"
+              value={totals.fat}
+              unit="g"
+              icon={<CircleDot className="h-5 w-5" />}
+              color="red"
+            />
+            <MetricCard
+              title="Sugar"
+              value={totals.sugar}
+              unit="g"
+              icon={<Droplet className="h-5 w-5" />}
+              color="violet"
+            />
+            <MetricCard
+              title="Sodium"
+              value={totals.sodium}
+              goal={profile.dailySodiumGoal}
+              unit="mg"
+              icon={<Zap className="h-5 w-5" />}
+              color="cyan"
+            />
+            <MetricCard
+              title="Cholesterol"
+              value={totals.cholesterol}
+              goal={profile.dailyCholesterolGoal}
+              unit="mg"
+              icon={<AlertCircle className="h-5 w-5" />}
+              color="orange"
+            />
           </div>
 
           {/* Progress Section */}

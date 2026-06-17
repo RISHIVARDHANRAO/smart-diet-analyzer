@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Upload, Loader2, Save, ImageIcon, AlertCircle } from 'lucide-react'
+import { Upload, Loader2, Save, ImageIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -24,7 +24,6 @@ export function ScanForm() {
   const [carbohydrates, setCarbohydrates] = useState('')
   const [sodium, setSodium] = useState('')
   const [cholesterol, setCholesterol] = useState('')
-  const [apiKey, setApiKey] = useState(profile?.apiKey || '')
 
   const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -103,29 +102,6 @@ export function ScanForm() {
 
   return (
     <div className="space-y-6">
-      {/* API Key Section */}
-      <div className="rounded-xl border border-border bg-card p-6">
-        <div className="flex items-start gap-3 mb-4">
-          <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
-          <div>
-            <h3 className="text-sm font-semibold text-foreground">API Configuration</h3>
-            <p className="mt-1 text-xs text-muted-foreground">Add your nutrition analysis API key for enhanced processing</p>
-          </div>
-        </div>
-        <div>
-          <Label htmlFor="apiKey" className="text-card-foreground text-xs">API Key (Optional)</Label>
-          <Input
-            id="apiKey"
-            type="password"
-            placeholder="sk_live_xxxxxxxxxxxxx"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            className="mt-1.5"
-          />
-          <p className="mt-2 text-xs text-muted-foreground">Your API key is stored locally and never sent to external servers</p>
-        </div>
-      </div>
-
       {/* Image Upload Section */}
       <div className="rounded-xl border border-border bg-card p-6">
         <h3 className="text-sm font-semibold text-foreground mb-4">Upload Food Image</h3>
