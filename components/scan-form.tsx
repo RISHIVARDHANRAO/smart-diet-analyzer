@@ -65,8 +65,23 @@ export function ScanForm() {
     }
   }, [processImage])
 
-  const handleCameraCapture = () => {
-    setIsCameraOpen(true)
+  const handleUploadClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleCameraCapture = async () => {
+    try {
+      // Request camera permission explicitly
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' }
+      })
+      // Stop the stream after permission is granted
+      stream.getTracks().forEach(track => track.stop())
+      // Open camera modal
+      setIsCameraOpen(true)
+    } catch (err) {
+      toast.error('Camera permission denied or not available')
+    }
   }
 
   const handleCameraCapture_Modal = useCallback((imageData: string) => {
@@ -174,19 +189,21 @@ export function ScanForm() {
 
       {/* Upload Buttons */}
       <div className="flex gap-3">
-        <label className="flex-1 relative">
-          <Button className="w-full" variant="default">
-            <Upload className="mr-2 h-4 w-4" />
-            Upload Image
-          </Button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleImageUpload}
-          />
-        </label>
+        <Button 
+          className="flex-1" 
+          variant="default"
+          onClick={handleUploadClick}
+        >
+          <Upload className="mr-2 h-4 w-4" />
+          Upload Image
+        </Button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleImageUpload}
+        />
         <Button 
           className="flex-1"
           variant="outline"
