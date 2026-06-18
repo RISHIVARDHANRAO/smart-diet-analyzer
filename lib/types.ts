@@ -10,6 +10,8 @@ export interface FoodEntry {
   cholesterol: number
   date: string
   imageUrl?: string
+  warnings?: string[]
+  timestamp?: number
 }
 
 export interface UserProfile {
@@ -21,6 +23,8 @@ export interface UserProfile {
   dailyCarbsGoal?: number
   dailySodiumGoal?: number
   dailyCholesterolGoal?: number
+  foodAllergies?: string[]
+  dietRestrictions?: string[]
 }
 
 export interface DailyTotals {

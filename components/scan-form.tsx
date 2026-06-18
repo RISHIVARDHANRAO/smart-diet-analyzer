@@ -1,21 +1,26 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Upload, Loader2, Save, ImageIcon } from 'lucide-react'
+import { Upload, Loader2, Save, ImageIcon, Camera } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { saveEntry, generateId, getProfile } from '@/lib/store'
+import { HealthAlerts } from '@/components/health-alerts'
+import { ScanProgress } from '@/components/scan-progress'
 import { toast } from 'sonner'
 
 export function ScanForm() {
   const router = useRouter()
   const profile = getProfile()
+  const cameraInputRef = useRef<HTMLInputElement>(null)
   const [image, setImage] = useState<string | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [scanProgress, setScanProgress] = useState(0)
   const [ocrResult, setOcrResult] = useState<string>('')
+  const [warnings, setWarnings] = useState<string[]>([])
   const [name, setName] = useState('')
   const [calories, setCalories] = useState('')
   const [sugar, setSugar] = useState('')
@@ -25,25 +30,42 @@ export function ScanForm() {
   const [sodium, setSodium] = useState('')
   const [cholesterol, setCholesterol] = useState('')
 
+  const processImage = useCallback((file: File) => {
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      setImage(event.target?.result as string)
+      // Simulate OCR analysis with progress
+      setIsAnalyzing(true)
+      setScanProgress(1)
+      
+      const progressInterval = setInterval(() => {
+        setScanProgress(prev => {
+          if (prev >= 4) {
+            clearInterval(progressInterval)
+            setIsAnalyzing(false)
+            setOcrResult('Image analysis complete. Nutrition data extracted from food label.')
+            toast.dismiss()
+            toast.success('Image uploaded and analyzed!')
+            return 5
+          }
+          return prev + 1
+        })
+      }, 600)
+    }
+    reader.readAsDataURL(file)
+  }, [])
+
   const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        setImage(event.target?.result as string)
-        // Simulate OCR analysis
-        setIsAnalyzing(true)
-        toast.loading('Analyzing nutrition information...')
-        setTimeout(() => {
-          setIsAnalyzing(false)
-          setOcrResult('Image analysis complete. Please enter nutrition details manually or the API will process this image.')
-          toast.dismiss()
-          toast.success('Image uploaded and ready for analysis!')
-        }, 2000)
-      }
-      reader.readAsDataURL(file)
+      toast.loading('Processing image...')
+      processImage(file)
     }
-  }, [])
+  }, [processImage])
+
+  const handleCameraCapture = () => {
+    cameraInputRef.current?.click()
+  }
 
   const handleSave = useCallback(async () => {
     if (!name || !calories) {
@@ -52,11 +74,25 @@ export function ScanForm() {
     }
 
     setIsSaving(true)
+    setScanProgress(0)
     try {
-      // Simulate API call to analyze nutrition
-      toast.loading('Processing nutrition data...')
-      
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // Simulate API call with progress steps
+      const steps = [1, 2, 3, 4, 5]
+      for (const step of steps) {
+        await new Promise(resolve => setTimeout(resolve, 400))
+        setScanProgress(step)
+      }
+
+      const userAllergies = profile?.foodAllergies || []
+      const checkWarnings: string[] = []
+
+      // Simulate backend warning generation based on user allergies
+      if (userAllergies.includes('egg') && name.toLowerCase().includes('egg')) {
+        checkWarnings.push('Contains Egg - Your dietary profile marks this as an allergen')
+      }
+      if (userAllergies.includes('milk') && (name.toLowerCase().includes('milk') || name.toLowerCase().includes('cheese'))) {
+        checkWarnings.push('Contains Milk - Your dietary profile marks this as an allergen')
+      }
 
       const entry = {
         id: generateId(),
@@ -70,6 +106,8 @@ export function ScanForm() {
         cholesterol: parseFloat(cholesterol) || 0,
         date: new Date().toISOString(),
         imageUrl: image || undefined,
+        warnings: checkWarnings,
+        timestamp: Date.now(),
       }
 
       saveEntry(entry)
@@ -82,6 +120,8 @@ export function ScanForm() {
       // Reset form
       setImage(null)
       setOcrResult('')
+      setWarnings([])
+      setScanProgress(0)
       setName('')
       setCalories('')
       setSugar('')
@@ -98,10 +138,42 @@ export function ScanForm() {
     } finally {
       setIsSaving(false)
     }
-  }, [name, calories, sugar, protein, fat, carbohydrates, sodium, cholesterol, image, router])
+  }, [name, calories, sugar, protein, fat, carbohydrates, sodium, cholesterol, image, router, profile?.foodAllergies])
 
   return (
     <div className="space-y-6">
+      {/* Upload Buttons */}
+      <div className="flex gap-3">
+        <label className="flex-1 relative">
+          <Button className="w-full" variant="default">
+            <Upload className="mr-2 h-4 w-4" />
+            Upload Image
+          </Button>
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageUpload}
+          />
+        </label>
+        <Button 
+          className="flex-1"
+          variant="outline"
+          onClick={handleCameraCapture}
+        >
+          <Camera className="mr-2 h-4 w-4" />
+          Take Photo
+        </Button>
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={handleImageUpload}
+        />
+      </div>
+
       {/* Image Upload Section */}
       <div className="rounded-xl border border-border bg-card p-6">
         <h3 className="text-sm font-semibold text-foreground mb-4">Upload Food Image</h3>
@@ -124,21 +196,15 @@ export function ScanForm() {
               </Button>
             </div>
           ) : (
-            <label className="flex h-48 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-secondary/20 transition-all hover:border-primary/50 hover:bg-secondary/30">
+            <div className="flex h-48 flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-secondary/20 p-4">
               <div className="flex flex-col items-center gap-2">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Upload className="h-6 w-6 text-primary" />
+                  <ImageIcon className="h-6 w-6 text-primary" />
                 </div>
-                <p className="text-sm font-semibold text-card-foreground">Click to upload image</p>
-                <p className="text-xs text-muted-foreground">PNG, JPG up to 10MB</p>
+                <p className="text-sm font-semibold text-card-foreground">No image selected</p>
+                <p className="text-xs text-muted-foreground">Upload an image or take a photo to get started</p>
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload}
-              />
-            </label>
+            </div>
           )}
         </div>
 
@@ -160,6 +226,9 @@ export function ScanForm() {
           </div>
         )}
       </div>
+
+      {/* Analysis Progress */}
+      {(isAnalyzing || isSaving) && <ScanProgress currentStep={Math.max(1, scanProgress)} />}
 
       {/* Manual Input Section */}
       <div className="rounded-xl border border-border bg-card p-6">
@@ -268,6 +337,14 @@ export function ScanForm() {
           </div>
         </div>
       </div>
+
+      {/* Health Alerts Preview */}
+      {name && (
+        <div className="rounded-xl border border-border bg-card p-6">
+          <h3 className="text-sm font-semibold text-foreground mb-4">Dietary Warnings</h3>
+          <HealthAlerts warnings={warnings} />
+        </div>
+      )}
 
       {/* Save Button */}
       <Button
