@@ -35,11 +35,12 @@ export default function CommunityPage() {
   }, [posts, selectedCategory, searchQuery, selectedTags])
 
   const handleCreatePost = (title: string, description: string, tags: string[]) => {
+    const userEmail = typeof window !== 'undefined' ? localStorage.getItem('userEmail') || 'user@example.com' : 'user@example.com'
     const newPost: CommunityPost = {
       id: String(posts.length + 1),
       title,
       description,
-      author: 'You',
+      author: userEmail,
       avatar: '😊',
       category: 'Recent Discussions',
       upvotes: 0,
