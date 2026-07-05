@@ -5,7 +5,7 @@ export const communityPosts: CommunityPost[] = [
     id: '1',
     title: 'My 30-Day Weight Loss Journey',
     description: 'Started at 95kg and committed to a 500 calorie deficit. Just hit 90kg! The key was consistency with meal prep and daily walks.',
-    author: 'sarah.chen@example.com',
+    author: 'sarah.chen@gmail.com',
     avatar: '👩‍🦰',
     category: 'Success Stories',
     upvotes: 342,
@@ -15,7 +15,7 @@ export const communityPosts: CommunityPost[] = [
     replies: [
       {
         id: 'c1',
-        author: 'mike.johnson@example.com',
+        author: 'mike.johnson@yahoo.com',
         avatar: '👨‍💼',
         content: 'This is amazing! What was your go-to meal for lunch?',
         createdAt: '1 day ago',
@@ -27,7 +27,7 @@ export const communityPosts: CommunityPost[] = [
     id: '2',
     title: 'Best High-Protein Snacks Under 200 Calories',
     description: 'Greek yogurt with berries (150 cal), protein bar (180 cal), hard-boiled eggs (80 cal), almonds (190 cal). These keep me full all day!',
-    author: 'alex.rivera@example.com',
+    author: 'alex.rivera@outlook.com',
     avatar: '🧑‍🍳',
     category: 'Healthy Food Tips',
     upvotes: 256,
@@ -37,7 +37,7 @@ export const communityPosts: CommunityPost[] = [
     replies: [
       {
         id: 'c2',
-        author: 'emma.wilson@example.com',
+        author: 'emma.wilson@gmail.com',
         avatar: '👩‍🏫',
         content: 'I always forget about hard-boiled eggs! Do you meal prep them?',
         createdAt: '3 days ago',
@@ -49,7 +49,7 @@ export const communityPosts: CommunityPost[] = [
     id: '3',
     title: 'Struggling with Keto Diet',
     description: 'Day 5 on keto and experiencing the keto flu. Feeling tired and dizzy. Is this normal? How long until I feel better?',
-    author: 'james.park@example.com',
+    author: 'james.park@gmail.com',
     avatar: '👨‍💻',
     category: 'Ask the Community',
     upvotes: 89,
@@ -59,7 +59,7 @@ export const communityPosts: CommunityPost[] = [
     replies: [
       {
         id: 'c3',
-        author: 'lisa.nutrition@example.com',
+        author: 'lisa.nutrition@outlook.com',
         avatar: '👩‍⚕️',
         content: 'Keto flu typically lasts 3-5 days. Make sure you&apos;re getting enough electrolytes!',
         createdAt: '6 days ago',
@@ -71,7 +71,7 @@ export const communityPosts: CommunityPost[] = [
     id: '4',
     title: 'Diabetes-Friendly Low-Carb Meals',
     description: 'Been managing Type 2 diabetes for 2 years. My favorite meals: cauliflower rice stir-fry, grilled chicken with broccoli, and zucchini noodles with marinara.',
-    author: 'tom.davis@example.com',
+    author: 'tom.davis@yahoo.com',
     avatar: '👨‍🌾',
     category: 'Healthy Food Tips',
     upvotes: 198,
@@ -83,7 +83,7 @@ export const communityPosts: CommunityPost[] = [
     id: '5',
     title: 'How do I track protein intake correctly?',
     description: 'I want to ensure I&apos;m hitting my 150g protein goal. Should I count protein from all foods or focus on specific sources?',
-    author: 'rachel.green@example.com',
+    author: 'rachel.green@outlook.com',
     avatar: '👩‍🎓',
     category: 'Ask the Community',
     upvotes: 124,
@@ -95,7 +95,7 @@ export const communityPosts: CommunityPost[] = [
     id: '6',
     title: 'Broke My Fast with the Right Foods!',
     description: 'After 16 hours of intermittent fasting, I broke my fast with bone broth, avocado, and eggs. Felt amazing and no digestive issues!',
-    author: 'marcus.lee@example.com',
+    author: 'marcus.lee@gmail.com',
     avatar: '🧘‍♂️',
     category: 'Success Stories',
     upvotes: 267,
@@ -105,7 +105,7 @@ export const communityPosts: CommunityPost[] = [
     replies: [
       {
         id: 'c4',
-        author: 'sofia.reyes@example.com',
+        author: 'sofia.reyes@yahoo.com',
         avatar: '🇪🇸',
         content: 'The bone broth is key! Many people mess up breaking fast with heavy foods.',
         createdAt: '6 days ago',
