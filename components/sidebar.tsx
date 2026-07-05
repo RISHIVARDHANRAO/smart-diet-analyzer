@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, ScanLine, History, User, Salad } from 'lucide-react'
+import { LayoutDashboard, ScanLine, History, User, Salad, MessageCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/scan', label: 'Scan Food', icon: ScanLine },
   { href: '/history', label: 'History', icon: History },
+  { href: '/community', label: 'Community', icon: MessageCircle },
   { href: '/profile', label: 'Profile', icon: User },
 ]
 
