@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Sidebar } from '@/components/sidebar'
 import { CommunityFeed } from '@/components/community-feed'
 import { CreatePostForm } from '@/components/create-post-form'
@@ -13,6 +13,12 @@ export default function CommunityPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [isCreatingPost, setIsCreatingPost] = useState(false)
+  const [currentUserEmail, setCurrentUserEmail] = useState<string>('')
+
+  useEffect(() => {
+    const userEmail = localStorage.getItem('userEmail') || ''
+    setCurrentUserEmail(userEmail)
+  }, [])
 
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
@@ -158,6 +164,7 @@ export default function CommunityPage() {
                   key={post.id}
                   post={post}
                   onUpvote={() => handleUpvote(post.id)}
+                  currentUserEmail={currentUserEmail}
                 />
               ))
             ) : (

@@ -7,10 +7,12 @@ import type { CommunityPost } from '@/lib/types'
 interface CommunityFeedProps {
   post: CommunityPost
   onUpvote: () => void
+  currentUserEmail?: string
 }
 
-export function CommunityFeed({ post, onUpvote }: CommunityFeedProps) {
+export function CommunityFeed({ post, onUpvote, currentUserEmail }: CommunityFeedProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const displayName = post.author === currentUserEmail ? 'you' : post.author
 
   return (
     <div className="rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50">
@@ -19,7 +21,7 @@ export function CommunityFeed({ post, onUpvote }: CommunityFeedProps) {
         <div className="flex items-start gap-3 flex-1">
           <div className="text-2xl">{post.avatar}</div>
           <div className="flex-1 min-w-0">
-            <p className="font-medium text-card-foreground">{post.author}</p>
+            <p className="font-medium text-card-foreground">{displayName}</p>
             <p className="text-xs text-muted-foreground">{post.createdAt}</p>
           </div>
         </div>
@@ -68,13 +70,15 @@ export function CommunityFeed({ post, onUpvote }: CommunityFeedProps) {
       {isExpanded && post.replies && post.replies.length > 0 && (
         <div className="mt-4 border-t border-border pt-4 space-y-3">
           <p className="text-xs font-medium text-muted-foreground">Recent Comments</p>
-          {post.replies.map((reply) => (
+          {post.replies.map((reply) => {
+            const commentDisplayName = reply.author === currentUserEmail ? 'you' : reply.author
+            return (
             <div key={reply.id} className="rounded-lg bg-secondary/30 p-3">
               <div className="flex items-start gap-2">
                 <span className="text-lg">{reply.avatar}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-xs font-medium text-card-foreground">{reply.author}</p>
+                    <p className="text-xs font-medium text-card-foreground">{commentDisplayName}</p>
                     <p className="text-xs text-muted-foreground">{reply.createdAt}</p>
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">{reply.content}</p>
@@ -82,7 +86,8 @@ export function CommunityFeed({ post, onUpvote }: CommunityFeedProps) {
                 </div>
               </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       )}
 
